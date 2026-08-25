@@ -20,17 +20,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # هذه الخطوة الجديدة ستساعدنا في معرفة أسماء الملفات الدقيقة
-      - name: List files (Debugging)
-        run: ls -la
-
+      # نقوم بفك الضغط مباشرة بدون شروط لأننا تأكدنا من وجود الملف
       - name: Unzip project
+        run: unzip hhhhhhhh00it45dfgy.zip -d android_project
+
+      # هذه الخطوة تتأكد أن الملفات لم تُدفن داخل مجلد فرعي إضافي عند فك الضغط
+      - name: Fix Directory Structure (If Needed)
         run: |
-          if [ -f "hhhhhhhh00it45dfgy.zip" ]; then
-            unzip "hhhhhhhh00it45dfgy.zip" -d android_project
-          else
-            echo "Error: The zip file was not found! Please check the file name in the 'List files' step."
-            exit 1
+          if [ ! -f "android_project/build.gradle.kts" ] && [ ! -f "android_project/build.gradle" ]; then
+            echo "Moving files from subfolder to android_project root..."
+            mv android_project/*/* android_project/ 2>/dev/null || true
           fi
 
       - name: Generate Gradle Wrapper
