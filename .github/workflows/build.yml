@@ -20,23 +20,24 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # هذه الخطوة ستبحث عن الملف وتقوم بفك ضغطه أينما كان
-      - name: Find and Unzip project
+      # الحل الأقوى: البحث عن أي ملف مضغوط وفك ضغطه متجاهلين الاسم
+      - name: Find and Unzip ANY zip file
         run: |
-          ZIP_FILE=$(find . -name "hhhhhhhh00it45dfgy.zip" -type f | head -n 1)
+          ZIP_FILE=$(find . -name "*.zip" -type f | head -n 1)
           
           if [ -z "$ZIP_FILE" ]; then
-            echo "Error: Could not find the zip file anywhere."
+            echo "Error: No .zip files found at all!"
+            ls -laR
             exit 1
           fi
           
-          echo "Found zip file at: $ZIP_FILE"
+          echo "Found a zip file: $ZIP_FILE. Extracting it now..."
           unzip "$ZIP_FILE" -d android_project
 
-      - name: Fix Directory Structure (If Needed)
+      - name: Fix Directory Structure
         run: |
           if [ ! -f "android_project/build.gradle.kts" ] && [ ! -f "android_project/build.gradle" ]; then
-            echo "Moving files from subfolder to android_project root..."
+            echo "Moving files from subfolder..."
             mv android_project/*/* android_project/ 2>/dev/null || true
           fi
 
