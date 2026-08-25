@@ -20,11 +20,19 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # نقوم بفك الضغط مباشرة بدون شروط لأننا تأكدنا من وجود الملف
-      - name: Unzip project
-        run: unzip hhhhhhhh00it45dfgy.zip -d android_project
+      # هذه الخطوة ستبحث عن الملف وتقوم بفك ضغطه أينما كان
+      - name: Find and Unzip project
+        run: |
+          ZIP_FILE=$(find . -name "hhhhhhhh00it45dfgy.zip" -type f | head -n 1)
+          
+          if [ -z "$ZIP_FILE" ]; then
+            echo "Error: Could not find the zip file anywhere."
+            exit 1
+          fi
+          
+          echo "Found zip file at: $ZIP_FILE"
+          unzip "$ZIP_FILE" -d android_project
 
-      # هذه الخطوة تتأكد أن الملفات لم تُدفن داخل مجلد فرعي إضافي عند فك الضغط
       - name: Fix Directory Structure (If Needed)
         run: |
           if [ ! -f "android_project/build.gradle.kts" ] && [ ! -f "android_project/build.gradle" ]; then
